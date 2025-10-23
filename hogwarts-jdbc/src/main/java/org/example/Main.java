@@ -43,6 +43,9 @@ public class Main {
             // Llamar al metodo que modifica el aula de una asignatura específica.
             Operaciones.modificarAulaAsignatura(conn, 7, "Observatorio Nocturno");
 
+            // LLamar al metodo que elimina una asignatura
+            Operaciones.eliminarAsignatura(conn, 17);
+
 
 
         } catch (SQLException e) {

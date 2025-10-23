@@ -187,6 +187,27 @@ public class Operaciones {
         }
     }
 
+    // Metodo que elimina una asignatura
+    public static void eliminarAsignatura(Connection conn, int idAsignatura) {
+        try {
+            String sql = "DELETE FROM Asignatura WHERE id_asignatura = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, idAsignatura);
+            int filasAfectadas = pstmt.executeUpdate();
+            pstmt.close();
+
+            System.out.println("---- ELIMINACIÓN DE ASIGNATURA ----");
+            System.out.println("Asignatura ID: " + idAsignatura);
+            System.out.println("Filas afectadas: " + filasAfectadas);
+
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar la asignatura: " + e.getMessage());
+        }
+    }
+
+
+
+
 
 
 
