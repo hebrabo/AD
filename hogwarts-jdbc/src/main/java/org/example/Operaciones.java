@@ -6,7 +6,10 @@ import java.util.List;
 
 public class Operaciones {
 
-    // // Metodo que obtiene todas las asignaturas registradas en la base de datos.
+    /*
+    * Metodo que obtiene
+    * todas las asignaturas registradas en la base de datos.
+     */
     public static List<Asignatura> obtenerAsignaturas(Connection conn) {
         List<Asignatura> asignaturas = new ArrayList<>();
         String sql = "SELECT id_asignatura, nombre_asignatura, aula, obligatoria FROM Asignatura";
@@ -31,7 +34,7 @@ public class Operaciones {
         return asignaturas;
     }
 
-    /**
+    /*
      * Metodo que consulta los nombres y apellidos de todos los estudiantes
      * que pertenecen a una casa específica
      */
@@ -62,6 +65,11 @@ public class Operaciones {
         }
     }
 
+    /*
+     * Metodo que consulta la mascota asociada a un estudiante específico
+     * por nombre y apellido
+     */
+
     public static void mostrarMascotaDeEstudiante(Connection conn, String nombre, String apellido){
         try {
             String sql = "SELECT m.nombre_mascota, m.especie " +
@@ -88,9 +96,45 @@ public class Operaciones {
             pstmt.close();
 
         } catch (SQLException e) {
-            System.out.println("Error al consultar la mascota: " + e.getMessage());
+            System.err.println("Error al consultar la mascota: " + e.getMessage());
         }
     }
+
+    /*
+     * Metodo que consulta y devuelve
+     * el número de estudiantes en cada casa de Hogwarts.
+     */
+
+    public static void mostrarNumeroEstudiantesPorCasa(Connection conn) {
+        try {
+            String sql = "SELECT c.nombre_casa, COUNT(e.id_estudiante) AS total_estudiantes " +
+                    "FROM Casa c " +
+                    "LEFT JOIN Estudiante e ON c.id_casa = e.id_casa " +
+                    "GROUP BY c.nombre_casa " +
+                    "ORDER BY c.nombre_casa";
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("---- NÚMERO DE ESTUDIANTES POR CASA: ----");
+            while (rs.next()) {
+                String nombreCasa = rs.getString("nombre_casa");
+                int total = rs.getInt("total_estudiantes");
+                System.out.println(nombreCasa + ": " + total);
+            }
+
+            rs.close();
+            pstmt.close();
+
+        } catch (SQLException e) {
+            System.err.println("Error al contar estudiantes por casa: " + e.getMessage());
+        }
+    }
+
+
+
+
+
 
 
 }

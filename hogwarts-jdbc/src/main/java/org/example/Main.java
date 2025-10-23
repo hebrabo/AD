@@ -33,6 +33,9 @@ public class Main {
             // Llamar al metodo que muestra la mascota de un estudiante específico
             Operaciones.mostrarMascotaDeEstudiante(conn,"Hermione", "Granger");
 
+            // Llamar al metodo que muestra el número de estudiantes en cada casa de Hogwarts.
+            Operaciones.mostrarNumeroEstudiantesPorCasa(conn);
+
 
 
         } catch (SQLException e) {
