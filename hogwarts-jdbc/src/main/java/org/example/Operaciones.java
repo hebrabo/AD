@@ -131,6 +131,43 @@ public class Operaciones {
         }
     }
 
+    /*
+    * Metodo que inserta una nueva asignatura en la tabla Asignatura.
+    * Recibe el nombre, aula y si es obligatoria como parámetros.
+    * Devuelve el ID generado de la nueva asignatura.
+    * */
+    public static int insertarAsignatura(Connection conn, String nombre, String aula, boolean obligatoria) {
+        int idGenerado = -1;
+        try {
+            String sql = "INSERT INTO Asignatura (nombre_asignatura, aula, obligatoria) VALUES (?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, nombre);
+            pstmt.setString(2, aula);
+            pstmt.setBoolean(3, obligatoria);
+
+            int filasAfectadas = pstmt.executeUpdate();
+            System.out.println("---- INSERCIÓN DE ASIGNATURA ----");
+            System.out.println("Filas afectadas al insertar: " + filasAfectadas);
+
+            // Obtener el ID generado
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                idGenerado = rs.getInt(1);
+            }
+
+            rs.close();
+            pstmt.close();
+            System.out.println("Asignatura insertada con ID: " + idGenerado);
+
+        } catch (SQLException e) {
+            System.err.println("Error al insertar la asignatura: " + e.getMessage());
+            return -1;
+        }
+        return idGenerado;
+    }
+
+
+
 
 
 

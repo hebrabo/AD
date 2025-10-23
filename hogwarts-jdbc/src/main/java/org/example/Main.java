@@ -36,6 +36,10 @@ public class Main {
             // Llamar al metodo que muestra el número de estudiantes en cada casa de Hogwarts.
             Operaciones.mostrarNumeroEstudiantesPorCasa(conn);
 
+            // Llamar al metodo que inserta una nueva asignatura en la tabla Asignatura.
+            int id = Operaciones.insertarAsignatura(conn, "Acceso a Datos", "Aula 3", true);
+            System.out.println("ID de la nueva asignatura: " + id);
+
 
 
         } catch (SQLException e) {
