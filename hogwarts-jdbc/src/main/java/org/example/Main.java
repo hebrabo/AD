@@ -30,6 +30,9 @@ public class Main {
             // Llamar al metodo que muestra estudiantes por casa
             Operaciones.consultarEstudiantesPorCasa(conn, "Gryffindor");
 
+            // Llamar al metodo que muestra la mascota de un estudiante específico
+            Operaciones.mostrarMascotaDeEstudiante(conn,"Hermione", "Granger");
+
 
 
         } catch (SQLException e) {

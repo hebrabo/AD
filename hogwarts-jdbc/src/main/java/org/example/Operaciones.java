@@ -62,4 +62,35 @@ public class Operaciones {
         }
     }
 
+    public static void mostrarMascotaDeEstudiante(Connection conn, String nombre, String apellido){
+        try {
+            String sql = "SELECT m.nombre_mascota, m.especie " +
+                    "FROM Estudiante e " +
+                    "JOIN Mascota m ON e.id_estudiante = m.id_estudiante " +
+                    "WHERE e.nombre = ? AND e.apellido = ?";
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, nombre);
+            pstmt.setString(2, apellido);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("---- MASCOTA DE " + nombre.toUpperCase() + " " + apellido.toUpperCase() + ":" + " ----");
+            if (rs.next()) {
+                String nombreMascota = rs.getString("nombre_mascota");
+                String especie = rs.getString("especie");
+                System.out.println(nombreMascota + " (" + especie + ")");
+            } else {
+                System.out.println("No se encontró mascota para ese estudiante.");
+            }
+
+            rs.close();
+            pstmt.close();
+
+        } catch (SQLException e) {
+            System.out.println("Error al consultar la mascota: " + e.getMessage());
+        }
+    }
+
+
 }
