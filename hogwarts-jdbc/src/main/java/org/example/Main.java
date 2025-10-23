@@ -28,8 +28,7 @@ public class Main {
             }
 
             // Llamar al metodo que muestra estudiantes por casa
-            Operaciones op = new Operaciones();
-            op.consultarEstudiantesPorCasa(conn, "Gryffindor");
+            Operaciones.consultarEstudiantesPorCasa(conn, "Gryffindor");
 
 
 

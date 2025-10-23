@@ -35,7 +35,7 @@ public class Operaciones {
      * Metodo que consulta los nombres y apellidos de todos los estudiantes
      * que pertenecen a una casa específica
      */
-    public void consultarEstudiantesPorCasa(Connection conn, String nombreCasa) {
+    public static void consultarEstudiantesPorCasa(Connection conn, String nombreCasa) {
         try {
             String sql = "SELECT e.nombre, e.apellido " +
                     "FROM Estudiante e " +
