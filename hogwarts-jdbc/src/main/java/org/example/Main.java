@@ -40,6 +40,9 @@ public class Main {
             int id = Operaciones.insertarAsignatura(conn, "Acceso a Datos", "Aula 3", true);
             System.out.println("ID de la nueva asignatura: " + id);
 
+            // Llamar al metodo que modifica el aula de una asignatura específica.
+            Operaciones.modificarAulaAsignatura(conn, 7, "Observatorio Nocturno");
+
 
 
         } catch (SQLException e) {

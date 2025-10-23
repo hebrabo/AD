@@ -166,6 +166,31 @@ public class Operaciones {
         return idGenerado;
     }
 
+    /* Metodo que modifica el aula de una asignatura específica.
+    * Recibe el ID de la asignatura y el nuevo nombre del aula como parámetros.
+    * Devuelve el número de filas afectadas mediante executeUpdate.
+    * */
+    public static void modificarAulaAsignatura(Connection conn, int idAsignatura, String nuevaAula) {
+        try {
+            String sql = "UPDATE Asignatura SET aula = ? WHERE id_asignatura = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, nuevaAula);
+            pstmt.setInt(2, idAsignatura);
+
+            int filasAfectadas = pstmt.executeUpdate();
+            System.out.println("---- MODIFICACIÓN DE AULA ----");
+            System.out.println("Filas afectadas al modificar: " + filasAfectadas);
+
+            pstmt.close();
+        } catch (SQLException e) {
+            System.err.println("Error al modificar el aula: " + e.getMessage());
+        }
+    }
+
+
+
+
+
 
 
 
