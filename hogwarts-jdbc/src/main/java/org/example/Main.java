@@ -20,13 +20,17 @@ public class Main {
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
             System.out.println("Conexión establecida correctamente");
 
-            // Llamar al método que devuelve las asignaturas
+            // Llamar al metodo que devuelve las asignaturas
+            System.out.println("---- LISTADO DE ASIGNATURAS: -----");
             List<Asignatura> lista = Operaciones.obtenerAsignaturas(conn);
-
-            // Mostrar cada asignatura en consola
             for (Asignatura a : lista) {
                 System.out.println(a);
             }
+
+            // Llamar al metodo que muestra estudiantes por casa
+            Operaciones op = new Operaciones();
+            op.consultarEstudiantesPorCasa(conn, "Gryffindor");
+
 
 
         } catch (SQLException e) {
