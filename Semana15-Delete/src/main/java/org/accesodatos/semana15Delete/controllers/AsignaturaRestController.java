@@ -1,5 +1,6 @@
 package org.accesodatos.semana15Delete.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.accesodatos.semana15Delete.dtos.response.AsignaturaDTO;
 import org.accesodatos.semana15Delete.services.AsignaturaService;
 import org.springframework.beans.factory.annotation.Autowired;

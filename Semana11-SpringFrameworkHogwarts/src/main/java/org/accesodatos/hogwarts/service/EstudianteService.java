@@ -1,6 +1,5 @@
 package org.accesodatos.hogwarts.service;
 
-import org.accesodatos.hogwarts.model.Estudiante;
 import org.accesodatos.hogwarts.repository.EstudianteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

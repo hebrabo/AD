@@ -62,6 +62,6 @@ public class Asignatura {
     @ManyToMany(mappedBy = "asignaturas")
     @JsonBackReference("estudiante-asignatura")
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude // <--- AÑADIDO: Vital para romper el bucle
+    @EqualsAndHashCode.Exclude
     private List<Estudiante> estudiantes;
 }

@@ -37,3 +37,5 @@ build/
 
 ### Mac OS ###
 .DS_Store
+# Ignorar credenciales de AWS antiguas
+Semana08-HogwartsDynamoBd/src/main/resources/db.properties
