@@ -50,14 +50,9 @@ public class Estudiante {
     @EqualsAndHashCode.Exclude
     private Casa casa;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "Estudiante_Asignatura",
-            joinColumns = @JoinColumn(name = "id_estudiante"),
-            inverseJoinColumns = @JoinColumn(name = "id_asignatura")
-    )
-    @JsonManagedReference("estudiante-asignatura")
+    @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("estudiante-calificaciones")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Asignatura> asignaturas = new HashSet<>();
+    private Set<EstudianteAsignatura> calificaciones = new HashSet<>();
 }

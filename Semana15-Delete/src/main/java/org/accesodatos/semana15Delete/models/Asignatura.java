@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -35,9 +36,9 @@ public class Asignatura {
     @EqualsAndHashCode.Exclude
     private Profesor profesor;
 
-    @ManyToMany(mappedBy = "asignaturas")
-    @JsonBackReference("estudiante-asignatura")
+    @OneToMany(mappedBy = "asignatura")
+    @JsonManagedReference("asignatura-calificaciones")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Estudiante> estudiantes;
+    private Set<EstudianteAsignatura> calificaciones = new HashSet<>();
 }

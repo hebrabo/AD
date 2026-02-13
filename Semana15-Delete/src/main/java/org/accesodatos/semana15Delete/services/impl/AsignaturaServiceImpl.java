@@ -45,27 +45,27 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                 .toList();
     }
 
-    // --- DELETE (RESTRICT)
+    // --- DELETE (RESTRICT) ---
     @Override
     @Transactional
     public void borrarAsignatura(Long id) {
-        // 1. Buscamos la asignatura
+        // 1. Buscamos la asignatura o lanzamos error si no existe
         Asignatura asignatura = asignaturaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Asignatura no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("La asignatura con ID " + id + " no existe."));
 
-        // 2. RESTRICT: Si hay alumnos, bloqueamos
-        if (asignatura.getEstudiantes() != null && !asignatura.getEstudiantes().isEmpty()) {
-            throw new IllegalStateException("No se puede borrar: existen estudiantes matriculados.");
+        // 2. RESTRICT: Comprobamos la tabla intermedia de CALIFICACIONES
+        if (asignatura.getCalificaciones() != null && !asignatura.getCalificaciones().isEmpty()) {
+            throw new IllegalStateException("RESTRICT: No se puede borrar '" + asignatura.getNombre() +
+                    "' porque tiene estudiantes con calificaciones registradas.");
         }
 
-        // 3. SET NULL: Desvincular al Profesor
+        // 3. SET NULL: Desvincular al Profesor asociado
         if (asignatura.getProfesor() != null) {
-            // Desvinculamos de ambos lados
             asignatura.getProfesor().setAsignatura(null);
             asignatura.setProfesor(null);
         }
 
-        // 4. Borrado
+        // 4. Borrado final
         asignaturaRepository.delete(asignatura);
     }
 }

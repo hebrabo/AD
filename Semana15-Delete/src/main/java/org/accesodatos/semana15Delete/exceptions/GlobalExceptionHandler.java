@@ -39,4 +39,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleNotFound(EntityNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
+    // 4. Captura errores de lógica de negocio (como el RESTRICT de borrar asignatura)
+    // Devuelve 400 Bad Request o 409 Conflict con el mensaje personalizado del servicio
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalState(IllegalStateException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }

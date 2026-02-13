@@ -33,13 +33,13 @@ public class EstudianteMapper {
 
         dto.setMascota(mascotaMapper.toDto(estudiante.getMascota()));
 
-        if (estudiante.getAsignaturas() != null) {
+        if (estudiante.getCalificaciones() != null) {
             dto.setAsignaturas(
-                    estudiante.getAsignaturas().stream()
-                            .map(asignaturaEntity -> {
+                    estudiante.getCalificaciones().stream()
+                            .map(calificacionEntity -> {
                                 AsignaturaCalificacionDTO asigDto = new AsignaturaCalificacionDTO();
-                                asigDto.setAsignatura(asignaturaEntity.getNombre());
-                                asigDto.setCalificacion(null);
+                                asigDto.setAsignatura(calificacionEntity.getAsignatura().getNombre());
+                                asigDto.setCalificacion(calificacionEntity.getCalificacion());
                                 return asigDto;
                             })
                             .toList()
