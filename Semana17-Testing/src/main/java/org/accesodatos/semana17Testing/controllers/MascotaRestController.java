@@ -8,46 +8,67 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/mascotas") // 1. La URL base para mascotas
+/**
+ * REST CONTROLLER DE MASCOTAS
+ * ---------------------------
+ * Punto de acceso para la gestión de mascotas.
+ * Sigue el patrón arquitectónico REST para ofrecer servicios de consulta
+ * sobre la base de datos de forma segura y estandarizada.
+ */
+
+@RestController // Indica que la respuesta de cada método se serializará directamente a JSON.
+@RequestMapping("/api/mascotas") // URL base para este recurso. Ejemplo: http://dominio-aws.com/api/mascotas
 public class MascotaRestController {
 
     private final MascotaService mascotaService;
 
-    @Autowired
+    @Autowired // Inyección por constructor: garantiza que el controlador tenga su servicio listo al arrancar.
     public MascotaRestController(MascotaService mascotaService) {
         this.mascotaService = mascotaService;
     }
 
-    // 2. GET /api/mascotas
+    /**
+     * 2. OBTENER TODAS LAS MASCOTAS
+     * Se utiliza el verbo GET para peticiones de lectura.
+     * ResponseEntity permite manejar la semántica HTTP.
+     */
     @GetMapping
     public ResponseEntity<List<MascotaDTO>> obtenerTodas() {
         List<MascotaDTO> mascotas = mascotaService.obtenerTodas();
 
         if (mascotas.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 Si la lista está vacía
+            // CÓDIGO 204: Petición exitosa, pero el servidor no tiene contenido que devolver.
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(mascotas); // 200 Si hay datos
+        // CÓDIGO 200: Éxito total. El cuerpo contiene la lista de DTOs.
+        return ResponseEntity.ok(mascotas);
     }
 
-    // 3. GET /api/mascotas/{id} (Ej: /api/mascotas/5)
+    /**
+     * 3. OBTENER POR ID (Ej: /api/mascotas/5)
+     * @PathVariable: Indica que el valor del ID viene incrustado en la ruta de la URL.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<MascotaDTO> obtenerPorId(@PathVariable Long id) {
         MascotaDTO mascota = mascotaService.obtenerMascotaPorId(id);
 
         if (mascota == null) {
-            return ResponseEntity.notFound().build(); // 404 Si no existe
+            // CÓDIGO 404: El cliente pidió un ID que no existe. Es un error del lado del cliente.
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(mascota); // 200 Si existe
+        return ResponseEntity.ok(mascota);
     }
 
-    // 4. GET /api/mascotas/nombre/{nombre} (Ej: /api/mascotas/nombre/Hedwig)
+    /**
+     * 4. BUSCAR POR NOMBRE (Ej: /api/mascotas/nombre/Hedwig)
+     * Permite búsquedas parciales o exactas delegando en la lógica del Servicio.
+     */
     @GetMapping("/nombre/{nombre}")
     public ResponseEntity<List<MascotaDTO>> obtenerPorNombre(@PathVariable String nombre) {
         List<MascotaDTO> mascotas = mascotaService.obtenerMascotasPorNombre(nombre);
 
         if (mascotas.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 Si no hay coincidencias
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(mascotas);
     }

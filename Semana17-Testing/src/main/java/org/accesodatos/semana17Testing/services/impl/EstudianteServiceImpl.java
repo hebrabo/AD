@@ -16,8 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * IMPLEMENTACIÓN DEL SERVICIO DE ESTUDIANTES
+ * -----------------------------------------
+ * Esta clase es el "cerebro" del CRUD de Hogwarts.
+ * Combina varios repositorios y mappers para asegurar que el flujo de datos
+ * sea coherente y cumpla las reglas de integridad de la base de datos.
+ */
+
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor // LOMBOK: Genera el constructor para inyectar los 3 componentes finales.
 public class EstudianteServiceImpl implements EstudianteService {
 
     private final EstudianteRepository estudianteRepository;
@@ -34,6 +42,7 @@ public class EstudianteServiceImpl implements EstudianteService {
 
     @Override
     public EstudianteDTO obtenerEstudiantePorId(Long id) {
+        // CONTROL DE ERRORES: Si no existe, lanzamos excepción. Spring la convertirá en un error 404.
         Estudiante estudiante = estudianteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Estudiante no encontrado con id: " + id));
         return estudianteMapper.toDto(estudiante);
@@ -49,27 +58,39 @@ public class EstudianteServiceImpl implements EstudianteService {
 
     // --- MÉTODOS POST Y PUT ---
 
+    /**
+     * CREAR ESTUDIANTE (POST)
+     * @Transactional: Si la casa no existe o el guardado falla, no se crea nada (Atomicidad).
+     */
     @Override
     @Transactional
     public EstudianteDTO crearEstudiante(EstudianteCreateDTO dto) {
+        // 1. Convertimos DTO a Entidad
         Estudiante estudiante = estudianteMapper.toEntity(dto);
 
+        // 2. REGLA DE NEGOCIO: Asignar Casa por ID si viene en el DTO
         if (dto.getCasaId() != null) {
             Casa casa = casaRepository.findById(dto.getCasaId())
                     .orElseThrow(() -> new EntityNotFoundException("Casa no encontrada con id: " + dto.getCasaId()));
-            estudiante.setCasa(casa);
+            estudiante.setCasa(casa); // Vinculamos la FK antes de guardar
         }
 
         Estudiante estudianteGuardado = estudianteRepository.save(estudiante);
         return estudianteMapper.toDto(estudianteGuardado);
     }
 
+    /**
+     * ACTUALIZAR ESTUDIANTE (PUT)
+     * No creamos un objeto nuevo. Recuperamos el existente
+     * y el Mapper actualiza sus campos.
+     */
     @Override
     @Transactional
     public EstudianteDTO actualizarEstudiante(Long id, EstudianteUpdateDTO dto) {
         Estudiante estudianteExistente = estudianteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Estudiante no encontrado con id: " + id));
 
+        // El Mapper sincroniza los datos del DTO en la Entidad gestionada
         estudianteMapper.updateEstudianteFromDto(dto, estudianteExistente);
 
         return estudianteMapper.toDto(estudianteRepository.save(estudianteExistente));
@@ -77,13 +98,18 @@ public class EstudianteServiceImpl implements EstudianteService {
 
     // --- MÉTODO DELETE ---
 
-    // DELETE (CASCADE)
+    /**
+     * BORRAR ESTUDIANTE (CON REGLA DE NEGOCIO)
+     * Antes de borrar, comprobamos condiciones.
+     * En Hogwarts no se puede expulsar a alguien si su mascota sigue allí.
+     */
     @Override
     @Transactional
     public void borrarEstudiante(Long id) {
         Estudiante estudiante = estudianteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Estudiante no encontrado con id: " + id));
 
+        // REGLA DE PROTECCIÓN: Evita el borrado si hay una relación activa que lo impida.
         if (estudiante.getMascota() != null) {
             throw new IllegalStateException("No se puede expulsar a un estudiante con mascota activa.");
         }

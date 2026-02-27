@@ -13,6 +13,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * IMPLEMENTACIÓN DEL SERVICIO DE CASAS
+ * ------------------------------------
+ * Esta clase coordina el acceso a datos y la transformación.
+ */
+
 @Service
 public class CasaServiceImpl implements CasaService {
     private final CasaRepository casaRepository;
@@ -27,7 +33,7 @@ public class CasaServiceImpl implements CasaService {
     @Override
     public List<CasaDTO> obtenerTodas() {
         return casaRepository.findAll().stream()
-                .map(casaMapper::toDto)
+                .map(casaMapper::toDto) // Convertimos cada Entidad en DTO
                 .toList();
     }
 
@@ -45,31 +51,40 @@ public class CasaServiceImpl implements CasaService {
                 .toList();
     }
 
-    // --- DELETE (SET NULL)  ---
+    /**
+     * BORRADO CON ESTRATEGIA SET NULL
+     * -------------------------------
+     * Al no usar CascadeType.REMOVE, si intentamos borrar una casa
+     * que tiene alumnos, PostgreSQL daría un error de Foreign Key.
+     * Esta lógica "rompe" los vínculos antes del borrado.
+     */
     @Override
-    @Transactional
+    @Transactional // OBLIGATORIO: Si el borrado falla, los estudiantes recuperan su casa (Rollback).
     public void borrarCasa(Long id) {
-        // 1. Buscamos la casa
+        // 1. Buscamos la entidad en el contexto de persistencia de Hibernate
         Casa casa = casaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Casa no encontrada"));
 
-        // 2. DESVINCULAR DE UN LADO Y DE OTRO
+        // 2. DESVINCULACIÓN MANUAL (Para mantener integridad referencial)
 
-        // A. Desvincular Estudiantes (Lado Many)
+        // A. Relación 1:N con Estudiantes:
+        // Recorremos los estudiantes y les ponemos su casa a NULL.
+        // No los borramos, solo los dejamos "sin casa".
         if (casa.getEstudiantes() != null) {
             for (Estudiante estudiante : casa.getEstudiantes()) {
-                estudiante.setCasa(null); // El estudiante ya no apunta a la casa
+                estudiante.setCasa(null);
             }
-            casa.getEstudiantes().clear(); // La casa ya no apunta a los estudiantes
+            casa.getEstudiantes().clear();
         }
 
-        // B. Desvincular Jefe de Casa (Lado OneToOne)
+        // B. Relación 1:1 con Profesor (Jefe de Casa):
+        // Quitamos la referencia en ambos lados para evitar errores de FK.
         if (casa.getJefeCasa() != null) {
             casa.getJefeCasa().setCasa(null);
             casa.setJefeCasa(null);
         }
 
-        // 3. EJECUTAR EL BORRADO
+        // 3. Una vez que la casa está "aislada" y no tiene hijos apuntando a ella, borramos.
         casaRepository.delete(casa);
     }
 }
